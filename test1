@@ -1,0 +1,17 @@
+if (!"O".equals(cjob.getAgenttype())) {
+            uuids = jobRepository.findJobUuidsByNameAndLevelOrderBySchedtimeDesc(cjob.getName(), "F");
+        } else {
+            uuids = jobRepository.findJobUuidsByNameAndLevelOrderBySchedtimeDesc(cjob.getName(), "X");
+
+            /*** oracle多通道删除部分为T W 的作业 **/
+
+            Iterator<String> it = uuids.iterator();
+            while (it.hasNext()) {
+                String temp = it.next();
+                int errors = jobRepository.findCountByUUidAndstatus(temp);
+
+                if (errors > 0) {
+                    it.remove();
+                }
+            }
+        }
